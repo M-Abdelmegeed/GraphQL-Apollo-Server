@@ -6,7 +6,11 @@ const mongoose = require("mongoose");
 require("dotenv").config();
 const app = express();
 
-const server = new ApolloServer({ typeDefs, resolvers });
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  context: ({ req }) => ({ req }),
+});
 
 async function startServer() {
   await server.start();
