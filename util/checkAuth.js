@@ -1,4 +1,4 @@
-const jwt = require("json-web-token");
+const jwt = require("jsonwebtoken");
 const { AuthenticationError } = require("apollo-server");
 require("dotenv").config();
 
@@ -8,6 +8,7 @@ module.exports = (context) => {
   if (authHeader) {
     // Bearer ....
     const token = authHeader.split("Bearer ")[1];
+    // console.log(token);
     if (token) {
       try {
         const user = jwt.verify(token, secretKey);
@@ -18,5 +19,5 @@ module.exports = (context) => {
     }
     throw new Error("Authentication token must be 'Bearer [token]");
   }
-  throw new Error("Authentication token must be provided");
+  throw new Error("Authorization header must be provided!");
 };

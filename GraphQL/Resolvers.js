@@ -2,6 +2,7 @@ const Post = require("../Models/Post");
 const User = require("../Models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { AuthenticationError } = require("apollo-server");
 const { UserInputError } = require("apollo-server");
 require("dotenv").config();
 const checkAuth = require("../util/checkAuth");
@@ -29,7 +30,7 @@ const resolvers = {
   Query: {
     async getPosts() {
       try {
-        const posts = await Post.find();
+        const posts = await Post.find().sort({ createdAt: -1 });
         return posts;
       } catch (err) {
         throw new Error(err);
@@ -60,6 +61,20 @@ const resolvers = {
       });
       const post = await newPost.save();
       return post;
+    },
+    async deletePost(_, { postId }, context) {
+      const user = checkAuth(context);
+      try {
+        const post = await Post.findById(postId);
+        if (user.username === post.username) {
+          await Post.deleteOne({ _id: postId });
+          return "Post deleted successfully";
+        } else {
+          throw new AuthenticationError("Action not allowed");
+        }
+      } catch (err) {
+        throw new Error(err);
+      }
     },
     async login(_, { username, password }) {
       const { errors, valid } = validateLoginInput(username, password);
