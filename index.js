@@ -1,6 +1,6 @@
 const { ApolloServer } = require("apollo-server-express");
 const { typeDefs } = require("./GraphQL/TypeDefs");
-const { resolvers } = require("./GraphQL/Resolvers");
+const resolvers = require("./GraphQL/indexResolvers");
 const express = require("express");
 const mongoose = require("mongoose");
 require("dotenv").config();
